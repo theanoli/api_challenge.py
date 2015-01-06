@@ -13,13 +13,29 @@ reg_url = url_prefix + 'register'
 reg_keys = json.dumps({'email': 'theanosaurus@gmail.com', 
 			'github' : 'https://github.com/theanoli/api_challenge.py'})
 
-# Send registration request and parse response
+# Send registration request and parse response, save token
 request = urllib2.Request(reg_url, reg_keys)
 response = urllib2.urlopen(request).read()
 token = json.loads(response)["result"]
 
+print "Your token is %s." % token
+
 # Save token as a JSON object
 json_token = json.dumps({'token' : token})
+
+
+# Check progress on API challenge
+def check_progress():
+	request = urllib2.Request(url_prefix + 'status', json_token)
+	response = urllib2.urlopen(request).read()
+	result = json.loads(response)["result"]
+
+	stages = [("Stage %d passed" % i, i) for i in range(1,5)]
+	for (stage, num) in stages: 
+		if result[stage]:
+			print "Passed stage %d!" % num
+		else: 
+			print "Haven't passed stage %d; try again!" % num
 
 
 # Function to get stage information
@@ -37,8 +53,11 @@ def post_token(get_name, do_encode):
 def validate(val_name, answer_key, answer_value):
 	val_keys = json.dumps({ 'token' : token,
 							answer_key : answer_value})
-	validate_request = urllib2.Request(url_prefix + val_name, val_keys)
 
+	validate_request = urllib2.Request(url_prefix + val_name, val_keys)
+	response = urllib2.urlopen(validate_request).read()
+	result = json.loads(response)["result"]
+	print result
 
 def reverse_string():
 	# Retrieve string; need to encode as ascii
@@ -98,7 +117,8 @@ def dating_game():
 	validate('validatetime', "datestamp", newtime_iso)
 
 
-reverse_string()
-needle_in_haystack()
-prefix()
-dating_game()
+check_progress()
+# reverse_string()
+# needle_in_haystack()
+# prefix()
+# dating_game()
