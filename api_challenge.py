@@ -5,11 +5,13 @@ import re
 import dateutil.parser as dp
 from datetime import datetime
 
+
 url_prefix = 'http://challenge.code2040.org/api/'
 
+# Arguments to POST request
 reg_url = url_prefix + 'register'
 reg_keys = json.dumps({'email': 'theanosaurus@gmail.com', 
-			'github' : 'https://bitbucket.org/theanoli'})
+			'github' : 'https://github.com/theanoli/api_challenge.py'})
 
 # Send registration request and parse response
 request = urllib2.Request(reg_url, reg_keys)
@@ -72,7 +74,7 @@ def prefix():
 
 	pref_array = []
 
-	# Use regexp to check for prefix
+	# Use re.match to check beginning of string for prefix
 	for string in array: 
 		if re.match("%s.*" % prefix, string) == None: 
 			pref_array.append(string)
@@ -85,7 +87,7 @@ def dating_game():
 
 	# datestamp = ISO 8601 datestamp string, interval = nsecs
 	datestamp, interval = response_dict["datestamp"], response_dict["interval"]
-	
+
 	# Parse date into date object and convert to seconds
 	date_in_secs = dp.parse(datestamp).strftime('%s')
 
@@ -93,9 +95,10 @@ def dating_game():
 	newtime_obj = datetime.fromtimestamp(int(date_in_secs) + interval)
 	newtime_iso = datetime.isoformat(newtime_obj)
 
-	# validate('validatetime', "datestamp", newtime_iso)
+	validate('validatetime', "datestamp", newtime_iso)
 
-# reverse_string()
-# needle_in_haystack()
-# prefix()
+
+reverse_string()
+needle_in_haystack()
+prefix()
 dating_game()
